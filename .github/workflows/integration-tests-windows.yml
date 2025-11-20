@@ -8,11 +8,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout specific commit
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: f77a8323  # нужный коммит
+      # - name: Checkout specific commit
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      #     ref: f77a8323  # нужный коммит
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
