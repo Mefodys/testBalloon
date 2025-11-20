@@ -1,8 +1,6 @@
 name: 'Validate the build'
 
-on:
-  workflow_call
-  workflow_dispatch
+on: [ workflow_call, workflow_dispatch ]
 
 jobs:
   validate-primary:
