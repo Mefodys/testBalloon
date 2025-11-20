@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: a619c92  # нужный коммит
+          ref: f77a8323  # нужный коммит
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
