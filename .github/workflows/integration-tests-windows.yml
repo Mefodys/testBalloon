@@ -1,0 +1,44 @@
+name: Integration Tests (Windows)
+
+on:
+  workflow_dispatch:  # Позволяет запускать вручную из вкладки Actions
+
+jobs:
+  integration-tests:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout specific commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: a619c92  # нужный коммит
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run integration tests
+        shell: pwsh
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g"
+        run: .\gradlew.bat --info --stacktrace integrationTests
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/**
+            **/build/test-results/**
