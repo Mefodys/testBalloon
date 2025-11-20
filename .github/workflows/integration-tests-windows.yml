@@ -32,7 +32,7 @@ jobs:
         shell: pwsh
         env:
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g"
-        run: .\gradlew --info --stacktrace integrationTests
+        run: gradle --info --stacktrace integrationTests
 
       - name: Upload reports
         if: always()
