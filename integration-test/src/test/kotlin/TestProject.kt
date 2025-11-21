@@ -60,13 +60,40 @@ internal open class TestProject(projectTestSuite: TestSuite, projectName: String
     internal suspend fun gradleExecution(
         vararg arguments: String,
         environment: Map<String, String> = emptyMap()
-    ): Execution = execution(
-        (projectDirectory() / (if (runsOnWindows) "gradlew.bat" else "gradlew")).pathString,
-        "-p",
-        projectDirectory().pathString,
-        *arguments,
-        environment = environment
-    )
+    ): Execution {
+        val projDir = projectDirectory()
+        val isWin = runsOnWindows
+
+        return if (isWin) {
+            // Собираем команду для bash -lc "<строка>"
+            val gradlew = (projDir / "gradlew").pathString
+            val cmd = buildString {
+                append('"')
+                append(escapeForBash(gradlew)); append(' ')
+                append("-p "); append(escapeForBash(projDir.pathString)); append(' ')
+                arguments.forEach {
+                    append(escapeForBash(it)); append(' ')
+                }
+                append('"')
+            }
+            // bash -lc "<cmd>"
+            execution(
+                "bash", "-lc", cmd,
+                environment = environment
+            )
+        } else {
+            execution(
+                (projDir / "gradlew").pathString,
+                "-p", projDir.pathString,
+                *arguments,
+                environment = environment
+            )
+        }
+    }
+
+    // Минимальная экранировка для bash-командной строки
+    private fun escapeForBash(s: String) =
+        "'" + s.replace("'", "'\"'\"'") + "'"
 
     private val runsOnWindows = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
 
